@@ -12,7 +12,7 @@ export default class App extends Component {
 }
 
 const tabNavigator = createSwitchNavigator({
-  // Login: { screen: Login },
+  Login: { screen: Login },
   TabNavigator: { screen: TabNavigator },
   Comment: {screen: Comment}
 });

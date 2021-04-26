@@ -177,7 +177,7 @@ export default class Login extends Component {
   login = (emailId, password) => {
     firebase
       .auth()
-      .signInWithEmailAndPassword('abc@xyz.com', '123456')
+      .signInWithEmailAndPassword(emailId, password)
       .then(() => {
         // ToastAndroid.show(
         //   'User  Logged In Successfully',

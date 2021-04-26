@@ -46,7 +46,7 @@ export const TabNavigator = createBottomTabNavigator({
   },
   Friends: {
     screen: Friends,
-        navigationOptions: {
+    navigationOptions: {
       tabBarIcon: (
         <Image
           source={require('../assets/addFriendIcon.png')}
@@ -56,7 +56,16 @@ export const TabNavigator = createBottomTabNavigator({
       tabBarLabel: 'Friends',
     },
   },
-    MyPosts: {
+  MyPosts: {
     screen: MyPosts,
+    navigationOptions: {
+      tabBarIcon: (
+        <Image
+          source={require('../assets/myPosts.png')}
+          style={{ width: 20, height: 25 }}
+        />
+      ),
+      tabBarLabel: 'My Posts',
+    },
   },
 });
