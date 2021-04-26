@@ -8,12 +8,27 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "expo": "~41.0.1",
-    "expo-status-bar": "~1.0.4",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
-    "react-native-web": "~0.13.12"
+    "firebase": "8.1.2",
+    "@firebase/app": "0.x.0",
+    "expo-constants": "~9.1.1",
+    "expo-permissions": "~9.0.1",
+    "react-navigation": "4.1.1",
+    "expo-image-picker": "~8.3.0",
+    "@expo/vector-icons": "^10.0.0",
+    "react-native-paper": "3.6.0",
+    "react-native-video": "*",
+    "@firebase/app-types": "0.x.0",
+    "@firebase/firestore": "*",
+    "expo-linear-gradient": "~8.2.1",
+    "react-native-screens": "~2.9.0",
+    "react-native-elements": "1.2.7",
+    "react-navigation-tabs": "*",
+    "react-native-popup-menu": "*",
+    "react-native-reanimated": "~1.9.0",
+    "@react-navigation/native": "^3.6.5",
+    "react-native-media-controls": "*",
+    "react-native-gesture-handler": "~1.6.0",
+    "react-native-safe-area-context": "~3.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
