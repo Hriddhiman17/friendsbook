@@ -21,7 +21,7 @@
     "@firebase/firestore": "*",
     "expo-linear-gradient": "~8.2.1",
     "react-native-screens": "~2.9.0",
-    "react-native-elements": "1.2.7",
+    "react-native-elements": "2.2.1",
     "react-navigation-tabs": "*",
     "react-native-popup-menu": "*",
     "react-native-reanimated": "~1.9.0",

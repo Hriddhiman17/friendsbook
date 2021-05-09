@@ -12,7 +12,7 @@ import { Header } from 'react-native-elements';
 import db from '../config';
 import firebase from 'firebase';
 
-export default class Home extends Component {
+export default class Comment extends Component {
   constructor(props) {
     super(props);
     this.state = {

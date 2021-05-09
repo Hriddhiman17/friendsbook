@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { ListItem, Avatar } from 'react-native-elements';
+import { Avatar } from 'react-native-elements';
 import Header from '../components/AppHeader';
 import db from '../config';
 import firebase from 'firebase';
 
-export default class Home extends Component {
+export default class MyPosts extends Component {
   constructor() {
     super();
     this.state = {
@@ -35,6 +35,9 @@ export default class Home extends Component {
       });
   };
 
+  deletePost = (item) => {
+    db.collection('posts').doc(item.docId).delete()
+  };
   keyExtractor = (item, index) => index.toString();
 
   renderItem = ({ item, i }) => {
@@ -49,6 +52,17 @@ export default class Home extends Component {
             size={'small'}
           />
           <Text style={{ marginTop: 5 }}>{'  ' + item.name}</Text>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                this.deletePost(item);
+              }}>
+              <Image
+                style={{ height: 20, width: 15, marginRight: 25 }}
+                source={require('../assets/delete.png')}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <Text style={{ marginLeft: 10 }}>{item.about}</Text>
         <Image

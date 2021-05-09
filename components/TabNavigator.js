@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { Text, View, Image } from 'react-native';
+import React from 'react';
+import { Image } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Profile from '../screens/ProfileScreen';
 import Share from '../screens/SharingImageScreen';
 import Home from '../screens/HomeScreen';
@@ -11,12 +12,7 @@ export const TabNavigator = createBottomTabNavigator({
   Home: {
     screen: Home,
     navigationOptions: {
-      tabBarIcon: (
-        <Image
-          source={require('../assets/home.png')}
-          style={{ width: 25, height: 25 }}
-        />
-      ),
+      tabBarIcon: <Icon name={'home'} size={25} />,
       tabBarLabel: 'Home',
     },
   },
@@ -35,12 +31,7 @@ export const TabNavigator = createBottomTabNavigator({
   Share: {
     screen: Share,
     navigationOptions: {
-      tabBarIcon: (
-        <Image
-          source={require('../assets/share.png')}
-          style={{ width: 20, height: 24 }}
-        />
-      ),
+      tabBarIcon: <Icon name={'share'} size={25} />,
       tabBarLabel: 'Share',
     },
   },

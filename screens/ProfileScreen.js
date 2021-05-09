@@ -137,7 +137,7 @@ export default class Profile extends Component {
             />
             <TouchableOpacity
               style={styles.updateButton}
-              onPress={this.updateUserDetails}>
+              onPress={this.updateUserDetails()}>
               <Text style={styles.buttonText}>Update</Text>
             </TouchableOpacity>
           </View>

@@ -14,7 +14,7 @@ import Header from '../components/AppHeader';
 import db from '../config';
 import firebase from 'firebase';
 
-export default class Home extends Component {
+export default class Friends extends Component {
   constructor() {
     super();
     this.state = {
@@ -23,12 +23,15 @@ export default class Home extends Component {
       friendsList: [],
       allRequests: [],
       allFriends: [],
+      allFriendRequests: [],
       image: '#',
       docId: '',
       userIdFriend: '',
       docIdFriend: '',
       searched: '',
       matches: [],
+      docIdRequest: '',
+      name: '',
     };
     this.matchesRef = null;
   }
@@ -60,6 +63,7 @@ export default class Home extends Component {
         querySnapshot.forEach((doc) => {
           this.setState({
             docId: doc.id,
+            name: doc.data().first_name + ' ' + doc.data().last_name,
           });
         });
       });
@@ -73,6 +77,47 @@ export default class Home extends Component {
         });
       });
   }
+  getSearchedUsers = (searched) => {
+    this.matchesRef = db
+      .collection('users')
+      .where('email_id', '!=', this.state.userId)
+      .where('first_name', '==', searched)
+      .onSnapshot((snapshot) => {
+        var requestedallUsers = snapshot.docs.map((doc) => doc.data());
+        this.setState({
+          matches: requestedallUsers,
+        });
+      });
+  };
+  getAllRequests = () => {
+    db.collection('allRequests')
+      // .orderBy('time', 'desc')
+      .where('requestFrom', '==', this.state.userId)
+      .onSnapshot((snapshot) => {
+        var allrequest = snapshot.docs.map((doc) => doc.data());
+        this.setState({
+          allRequests: allrequest,
+        });
+      });
+    db.collection('allRequests')
+      .where('requestFrom', '==', this.state.userId)
+      .onSnapshot((snapshot) => {
+        var docId = snapshot.docs.map((doc) => doc.id);
+        db.collection('allRequests').doc(docId).update({
+          'docId': docId,
+        });
+      });
+  };
+  getAllFriendRequest = () => {
+    db.collection('allRequests')
+      .where('requestedTo', '==', this.state.userId)
+      .onSnapshot((snapshot) => {
+        var allreq = snapshot.docs.map((doc) => doc.data());
+        this.setState({
+          allFriendRequests: allreq,
+        });
+      });
+  };
   addTheDocId() {
     db.collection('users').doc(this.state.docId).update({
       docId: this.state.docId,
@@ -82,15 +127,20 @@ export default class Home extends Component {
     });
   }
   sendRequest = async (item) => {
-    // this.addTheDocId();
-    db.collection('users')
-      .doc(this.state.docId)
-      .update({ allRequests: { requestedTo: item.email_id } });
-    db.collection('users')
-      .doc(this.state.docIdFriend)
-      .update({ allRequests: { requestedFrom: this.state.userId } });
+    db.collection('allRequests').add({
+      requestFrom: this.state.userId,
+      friendProfilePic: item.profile_pic,
+      friendName: item.first_name + ' ' + item.last_name,
+      name: this.state.name,
+      requestedTo: item.email_id,
+      time: firebase.firestore.FieldValue.serverTimestamp(),
+    });
   };
 
+  deleteR = (item) => {
+    alert(item.docId);
+    db.collection('allRequests').doc(item.docId).delete();
+  };
   keyExtractor = (item, index) => index.toString();
 
   renderItem = ({ item, i }) => {
@@ -142,9 +192,6 @@ export default class Home extends Component {
           />
         }
         title={item.first_name + ' ' + item.last_name}
-        subtitle={
-          ('Address :' + ' ' + item.address, 'Contact :' + ' ' + item.contact)
-        }
         titleStyle={{ color: 'black', fontWeight: 'bold' }}
         rightElement={
           <TouchableOpacity>
@@ -158,7 +205,9 @@ export default class Home extends Component {
       />
     );
   };
+
   keyExtractorForUsersLists = (item, index) => index.toString();
+
   renderItemForUsersLists = ({ item, i }) => {
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -180,44 +229,83 @@ export default class Home extends Component {
       </View>
     );
   };
-  getSearchedUsers = (searched) => {
-    this.matchesRef = db
-      .collection('users')
-      .where('email_id', '!=', this.state.userId)
-      .where('first_name', '==', searched)
-      .onSnapshot((snapshot) => {
-        var requestedallUsers = snapshot.docs.map((doc) => doc.data());
-        this.setState({
-          matches: requestedallUsers,
-        });
-      });
-  };
-  getAllRequests = () => {
-    db.collection('users')
-      .where('email_id', '==', this.state.userId)
-      .onSnapshot((snapshot) => {
-        var allrequest = snapshot.docs.map(
-          (doc) => doc.data().allRequests.requestedTo
-        );
+  keyExtractorForRequestLists = (item, index) => index.toString();
 
-        this.setState({
-          allRequests: allrequest,
-        });
-      });
+  renderItemForRequestLists = ({ item, i }) => {
+    return (
+      <ListItem
+        key={i}
+        leftElement={
+          <Avatar
+            rounded
+            source={{
+              uri: item.friendProfilePic,
+            }}
+            size={'medium'}
+          />
+        }
+        title={item.friendName}
+        titleStyle={{ color: 'black', fontWeight: 'bold' }}
+        rightElement={
+          <TouchableOpacity
+            onPress={() => {
+              this.deleteR(item);
+            }}>
+            <Image
+              style={{ width: 20, height: 25 }}
+              source={require('../assets/delete.png')}
+            />
+          </TouchableOpacity>
+        }
+        bottomDivider
+      />
+    );
   };
-  deleteRequest = (item)=>{
-    db.collection('users')
-      .where('email_id', '==', this.state.userId)
-      .onSnapshot((snapshot) => {
-        var allrequest = snapshot.docs.map(
-          (doc) => doc.data().allRequests.requestedTo.delete()
-        );})
-  }
+  keyExtractorForFriendRequestLists = (item, index) => index.toString();
+
+  renderItemForFriendRequestLists = ({ item, i }) => {
+    return (
+      <ListItem
+        key={i}
+        leftElement={
+          <Avatar
+            rounded
+            source={{
+              uri: item.friendProfilePic,
+            }}
+            size={'medium'}
+          />
+        }
+        title={item.name}
+        titleStyle={{ color: 'black', fontWeight: 'bold' }}
+        rightElement={
+          <View>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: 'green' }]}
+              onPress={() => {
+                // this.deleteR(item);
+              }}>
+              <Text>Accept</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: 'red' }]}
+              onPress={() => {
+                // this.deleteR(item);
+              }}>
+              <Text>Decline</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        bottomDivider
+      />
+    );
+  };
   componentDidMount() {
     this.getAllUsers();
-    this.getUserProfilePic();
     this.getTheDocId();
     this.getAllRequests();
+    this.getUserProfilePic();
+    this.getAllFriendRequest();
   }
   componentWillUnmount() {
     this.matchesRef;
@@ -267,10 +355,13 @@ export default class Home extends Component {
               </Card>
               <Card>
                 {this.state.friendsList.length === 0 ? (
-                  <Text>
-                    You are not having any friends :( . Add your friends from
-                    above.
-                  </Text>
+                  <View style={{ textAlign: 'center' }}>
+                    <Text>Friends</Text>
+                    <Text>
+                      You are not having any friends :( . Add your friends from
+                      above.
+                    </Text>
+                  </View>
                 ) : (
                   <FlatList
                     data={this.state.friendsList}
@@ -279,39 +370,40 @@ export default class Home extends Component {
                   />
                 )}
               </Card>
-
-              {this.state.allFriends.length === 0 ? (
-                <Card>
-                  <Text>You are not having any friend requests :(</Text>
-                </Card>
-              ) : (
-                <FlatList
-                  data={this.state.allFriends}
-                  renderItem={this.NaN}
-                  keyExtractor={this.NaN}
-                />
-              )}
-              {this.state.allRequests.length === 0 ? (
-                <Card>
-                  <Text>You have not sent any requests :(</Text>
-                </Card>
-              ) : (
-                <FlatList
-                  data={this.state.allRequests}
-                  renderItem={({ item, i }) => (
-                    <Card>
-                    <ListItem
-                      key={i}
-                      subtitle={
-                        'Email Id :' + ' ' + item
-                      }
-                      titleStyle={{ color: 'black', fontWeight: 'bold' }}
-                      bottomDivider
+              <Card>
+                {this.state.allFriendRequests.length === 0 ? (
+                  <View style={{ textAlign: 'center' }}>
+                    <Text style={{ marginBottom: 20 }}>Friend Requests</Text>
+                    <Text>You are not having any friend requests :(</Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={{ marginBottom: 20 }}>Friend Requests</Text>
+                    <FlatList
+                      data={this.state.allFriendRequests}
+                      renderItem={this.renderItemForFriendRequestLists}
+                      keyExtractor={this.keyExtractorForFriendRequestLists}
                     />
-                    </Card>
-                  )}
-                />
-              )}
+                  </View>
+                )}
+              </Card>
+              <Card>
+                {this.state.allRequests.length === 0 ? (
+                  <View style={{ textAlign: 'center' }}>
+                    <Text style={{ marginBottom: 20 }}>My Requests</Text>
+                    <Text>You have not sent any requests :(</Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={{ alignSelf: 'center' }}>My Requests</Text>
+                    <FlatList
+                      data={this.state.allRequests}
+                      renderItem={this.renderItemForRequestLists}
+                      keyExtractor={this.keyExtractorForRequestLists}
+                    />
+                  </View>
+                )}
+              </Card>
             </View>
           )}
         </ScrollView>
@@ -336,5 +428,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(0, 225, 0)',
     padding: 7,
     textAlign: 'center',
+  },
+  button: {
+    padding: 5,
   },
 });

@@ -8,11 +8,9 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { ListItem, Avatar, Icon } from 'react-native-elements';
-import Header from '../components/AppHeader';
+import { Avatar } from 'react-native-elements';
 import db from '../config';
 import firebase from 'firebase';
-import PopUpMenu from '../components/Pop-Up-Menu';
 
 export default class Home extends Component {
   constructor() {
@@ -30,7 +28,7 @@ export default class Home extends Component {
     };
   }
   getPosts = () => {
-    db.collection('posts').onSnapshot((snapshot) => {
+    db.collection('posts').orderBy('time', 'desc').onSnapshot((snapshot) => {
       var post = snapshot.docs.map((document) => document.data());
       this.setState({
         posts: post,

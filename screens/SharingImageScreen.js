@@ -110,7 +110,9 @@ export default class Share extends Component {
       user_profile_pic: this.state.profile_pic,
       email_id: this.state.userId,
       likes: 0
-    });
+    }).then(() =>{
+      alert('hjhu')
+    })
     // ToastAndroid.show(
     //   'Posted Successfully',
     //   ToastAndroid.SHORT,

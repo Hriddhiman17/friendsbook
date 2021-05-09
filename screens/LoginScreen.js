@@ -138,7 +138,6 @@ export default class Login extends Component {
       </Modal>
     );
   };
-
   userSignUp = (emailId, password, confirmPassword) => {
     if (password !== confirmPassword) {
       return alert("Password doesn't match. Check your password.");
@@ -162,8 +161,9 @@ export default class Login extends Component {
             //   25,
             //   50
             // ),
-            alert('User Added Successfully'),
-            this.setState({ isModalVisible: false, isLoading: false })
+            this.setState({ isModalVisible: false, isLoading: false }),
+            firebase.auth().signInWithEmailAndPassword(emailId, password),
+            this.props.navigation.navigate('RestLogin')
           );
         })
         .catch((error) => {
@@ -186,7 +186,7 @@ export default class Login extends Component {
         //   25,
         //   50
         // );
-        alert('User Logged In')
+        alert('User Logged In');
         this.setState({ isLoading: false });
         this.props.navigation.navigate('Home');
       })
@@ -197,6 +197,7 @@ export default class Login extends Component {
         return alert(errorMessage);
       });
   };
+  componentDidMount() {}
   render() {
     const isTrue = this.state.isLoading;
     return isTrue ? (
@@ -324,6 +325,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: 'blue',
     margin: 50,
+    marginBottom: 5,
+    // textDecorationLine: 'underline'
   },
   modalContainer: {
     flex: 1,

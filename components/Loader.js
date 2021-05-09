@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import AppHeader from './AppHeader';
 
 export default class Loader extends Component {
   constructor(props) {
